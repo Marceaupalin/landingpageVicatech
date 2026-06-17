@@ -296,10 +296,10 @@ export default function LeadForm({ calendlyUrl }: { calendlyUrl: string }) {
           <p className="text-sm text-coral font-medium">
             Une erreur s&apos;est produite. Contactez-nous directement:{" "}
             <a
-              href="mailto:marceau@elio-robot.fr"
+              href="mailto:contact@elio-robot.fr"
               className="underline underline-offset-2"
             >
-              marceau@elio-robot.fr
+              contact@elio-robot.fr
             </a>
           </p>
         </div>
