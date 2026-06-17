@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Elio - Landing page VivaTech
 
-## Getting Started
+Landing page mobile-first pour la capture de leads au salon VivaTech 2026.
 
-First, run the development server:
+---
+
+## Setup local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+# .env.local est déjà créé, remplir les valeurs (voir ci-dessous)
+npm run dev   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables d'environnement
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Requis | Description |
+|---|---|---|
+| `RESEND_API_KEY` | Oui | Clé API Resend — via Vercel Marketplace (recommandé) ou [resend.com](https://resend.com) |
+| `LEAD_NOTIFY_EMAIL` | Oui | Email de notification (`contact@elio-robot.fr`) |
+| `NEXT_PUBLIC_CALENDLY_URL` | Non | URL Calendly (ex: `https://calendly.com/elio/30min`) |
 
-## Learn More
+**Prérequis Resend:** le domaine `elio-robot.fr` doit être vérifié dans le dashboard Resend avant l'envoi depuis `contact@elio-robot.fr`. Voir "Resend via Vercel Marketplace" ci-dessous.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Vidéos de démonstration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Les vidéos sont intégrées directement dans `app/components/VideoTabs.tsx` avec 5 onglets:
 
-## Deploy on Vercel
+| Onglet | Description | ID YouTube |
+|---|---|---|
+| Propreté | Nettoyage autonome | `fBUd3LGrbX8` |
+| Logistique | AMR entrepôt | `RHblO-snwsc` |
+| Hôtellerie | Livraison en chambre | `b24OS_03ISs` |
+| Accueil | Réception et guidage | `iXXamxae2vg` |
+| Humanoïde | Robot polyvalent | `A6vH-QyBTIw` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Pour modifier une vidéo ou ajouter un onglet, éditez le tableau `TABS` dans ce fichier.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Resend via Vercel Marketplace (recommandé)
+
+Plutôt que de gérer la clé API manuellement, installez l'intégration Resend directement depuis Vercel:
+
+1. Dans le dashboard Vercel, ouvrir **Marketplace** et chercher "Resend"
+2. Installer l'intégration sur le projet `elio-robot`
+3. Resend ajoute automatiquement `RESEND_API_KEY` à l'environnement
+4. Dans le dashboard Resend, vérifier le domaine `elio-robot.fr` (ajout d'un enregistrement DNS TXT)
+5. Créer l'adresse `contact@elio-robot.fr` comme expéditeur autorisé
+
+---
+
+## Déployer sur Vercel
+
+### 1. Installer la Vercel CLI (si besoin)
+```bash
+npm i -g vercel
+```
+
+### 2. Lier le projet au projet Vercel existant
+```bash
+vercel link
+```
+
+### 3. Configurer les variables d'environnement sur Vercel
+```bash
+vercel env add RESEND_API_KEY
+vercel env add LEAD_NOTIFY_EMAIL
+vercel env add NEXT_PUBLIC_CALENDLY_URL
+vercel env add NEXT_PUBLIC_DEMO_VIDEO
+```
+
+### 4. Déployer en production
+```bash
+vercel --prod
+```
+
+Le domaine `elio-robot.fr` est à configurer dans **Project Settings > Domains** dans le dashboard Vercel.
+
+---
+
+## Logique de qualification des leads
+
+Chaque soumission de formulaire déclenche un email de notification avec un tier calculé automatiquement:
+
+| Surface déclarée | Tier |
+|---|---|
+| 1 000 m² et plus | **Viable** |
+| Moins de 1 000 m² | A écarter (surface insuffisante) |
+
+Sujet de l'email: `Lead VivaTech: {Société} ({Secteur}, {Surface}m²) - {Tier}`
