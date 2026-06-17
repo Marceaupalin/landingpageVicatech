@@ -30,8 +30,14 @@ const TABS = [
   {
     id: "humanoide",
     label: "Humanoïde",
-    subtitle: "Polyvalent et adaptable à tout contexte",
-    videoId: "A6vH-QyBTIw",
+    subtitle: "Robot humanoïde pour l'industrie",
+    videoId: "ub2gWviKZpk",
+  },
+  {
+    id: "surveillance",
+    label: "Surveillance",
+    subtitle: "Sécurité et inspection autonomes",
+    videoId: "Mcuo_03kezI",
   },
 ];
 
