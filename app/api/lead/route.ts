@@ -112,18 +112,28 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
-    await resend.emails.send({
-      from: "contact@elio-robot.fr",
+    const fromAddress = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+
+    const { error: sendError } = await resend.emails.send({
+      from: fromAddress,
       to: notifyEmail,
       subject,
       html,
     });
 
+    if (sendError) {
+      console.error("Resend error:", sendError);
+      return NextResponse.json(
+        { error: sendError.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Erreur envoi lead:", error);
     return NextResponse.json(
-      { error: "Erreur lors de l'envoi" },
+      { error: error instanceof Error ? error.message : "Erreur inconnue" },
       { status: 500 }
     );
   }
